@@ -7,6 +7,9 @@ public class CardUI : MonoBehaviour, IHoverable, IOnClick
 {
     [SerializeField] Image previewImage;
 
+    GameObject nodePrefab;
+    public GameObject NodePrefab => nodePrefab;
+
     bool hovering = false;
 
     public void SetPreviewImage(Sprite sprite)
@@ -21,7 +24,12 @@ public class CardUI : MonoBehaviour, IHoverable, IOnClick
 
     public void SetPosition(Vector3 position)
     {
-        transform.localPosition += position;
+        transform.localPosition = position;
+    }
+
+    public void SetNodeBase(GameObject nodePrefab)
+    {
+        this.nodePrefab = nodePrefab;
     }
 
     public void HoverEnter()
@@ -39,6 +47,8 @@ public class CardUI : MonoBehaviour, IHoverable, IOnClick
     public void MouseDown()
     {
         previewImage.color = new Color(1f, 0.5f, 0.9f, 1f);
+
+        GameManager.SetSelectedNodeCard(this);
     }
 
     public void MouseUp()

@@ -2,22 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Flags]
-public enum ConnectorPorts
-{
-    Up = 1 << 0,
-    Down = 1 << 1,
-    Left = 1 << 2,
-    Right = 1 << 3
-}
-
-public enum ConnectorType
-{
-    None = 0,
-    Object,
-    Connector
-}
-
 public class Node : MonoBehaviour
 {
     [Header("Config")]
@@ -52,8 +36,23 @@ public class Node : MonoBehaviour
 
     public void SetSprite()
     {
+        var spriteData = GetSprite(connectorType, activeConnectorPorts);
+
+        transform.rotation = Quaternion.Euler(0f, 0f, spriteData.Item2);
+        spriteRenderer.sprite = spriteData.Item1;
+    }
+
+    private void OnValidate()
+    {
+        Awake();
+
+        SetSprite();
+    }
+
+    public static (Sprite, int) GetSprite(ConnectorType connectorType, ConnectorPorts connectorPorts)
+    {
         int rotation = -1;
-        switch ((int)activeConnectorPorts)
+        switch ((int)connectorPorts)
         {
             case (1 << 2):
             case (1 << 1) | (1 << 2):
@@ -82,7 +81,7 @@ public class Node : MonoBehaviour
         }
 
         int index = -1;
-        switch ((int)activeConnectorPorts)
+        switch ((int)connectorPorts)
         {
             case (1 << 0):
             case (1 << 1):
@@ -109,33 +108,22 @@ public class Node : MonoBehaviour
                 break;
         }
 
-        if (index == -1 || rotation == -1)
-        {
-            spriteRenderer.sprite = noneSprite;
-            return;
-        }
-
-        transform.rotation = Quaternion.Euler(0f, 0f, rotation);
+        Sprite sprite = NoneSprite;
 
         switch (connectorType)
         {
             case ConnectorType.None:
-                spriteRenderer.sprite = noneSprite;
+                sprite = NoneSprite;
                 break;
-            case ConnectorType.Connector:
-                spriteRenderer.sprite = connectorSprites[index];
+            case ConnectorType.Fuse:
+                sprite = ConnectorSprites[index];
                 break;
             case ConnectorType.Object:
-                spriteRenderer.sprite = objectSprites[index];
+                sprite = ObjectSprites[index];
                 break;
         }
-    }
 
-    private void OnValidate()
-    {
-        if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
-
-        SetSprite();
+        return (sprite, rotation);
     }
 
     public static (Sprite, int) GenerateRandomNode(ConnectorType connectorType)
@@ -147,7 +135,7 @@ public class Node : MonoBehaviour
 
         switch (connectorType)
         {
-            case ConnectorType.Connector:
+            case ConnectorType.Fuse:
                 sprite = ConnectorSprites[index];
                 break;
             case ConnectorType.Object:

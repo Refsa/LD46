@@ -10,20 +10,27 @@ public class HandUI : MonoBehaviour
     int cardsInHand = 0;
 
     List<CardUI> cards;
+    RectTransform rectTransform;
 
     private void Awake() 
     {
-        cards = new List<CardUI>();    
+        cards = new List<CardUI>();
+        rectTransform = GetComponent<RectTransform>();
     }
 
-    public void AddCard(Sprite previewSprite, int rotation)
+    public void AddCard(Sprite previewSprite, int rotation, GameObject prefab)
     {
         var newCardUi = GameObject.Instantiate(cardUIPrefab, container).GetComponent<CardUI>();
 
         newCardUi.SetPreviewImage(previewSprite);
         newCardUi.SetRotation(rotation);
-        newCardUi.SetPosition(Vector3.right * cardsInHand * 100f);
+        newCardUi.SetNodeBase(prefab);
 
         cardsInHand++;
+    }
+
+    public void RemoveCard(CardUI card)
+    {
+        Destroy(card.gameObject);
     }
 }

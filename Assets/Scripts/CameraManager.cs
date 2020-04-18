@@ -6,7 +6,7 @@ public class CameraManager : MonoBehaviour
 {
     Vector3 previousMousePos = Vector3.zero;
 
-    void Update() 
+    void Update()
     {
         if (Input.GetKey(KeyCode.Mouse1))
         {

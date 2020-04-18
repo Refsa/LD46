@@ -9,6 +9,14 @@ public class GridTile : MonoBehaviour, IOnClick, IHoverable
     [SerializeField] Color clickColor;
 
     SpriteRenderer spriteRenderer;
+    public SpriteRenderer SpriteRenderer => spriteRenderer;
+
+    Vector2Int gridPos;
+
+    NodeBase nodeBase;
+    public NodeBase NodeBase => nodeBase;
+
+    public Vector2Int GridPos { get => gridPos; set => gridPos = value; }
 
     bool hovered = false;
     bool clicked = false;
@@ -18,10 +26,25 @@ public class GridTile : MonoBehaviour, IOnClick, IHoverable
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+    public void SetNodePrefab(GameObject nodePrefab)
+    {
+        nodePrefab.SetActive(true);
+        
+        this.nodeBase = nodePrefab.GetComponent<NodeBase>();
+        nodePrefab.transform.parent = transform;
+        nodePrefab.transform.localPosition = Vector3.zero;
+        // nodeBase.Start();
+
+        this.spriteRenderer.enabled = false;
+    }
+
     public void MouseDown()
     {
         spriteRenderer.color = clickColor;
         clicked = true;
+
+
+        GameManager.SetSelectedGridTile(this);
     }
 
     public void MouseUp()
@@ -31,6 +54,8 @@ public class GridTile : MonoBehaviour, IOnClick, IHoverable
         else
             spriteRenderer.color = hoverColor;
         clicked = false;
+
+        GameManager.SetSelectedGridTile(null);
     }
 
     public void HoverEnter()

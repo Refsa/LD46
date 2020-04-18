@@ -17,7 +17,13 @@ Todo:
             ☐ Generate score, show acquired bonuses
             ☐ Start next round
         ☐ Add in highscore
+            ☐ Amount of connections made
+            ☐ Total length of fuse
+            ☐ Score multiplier
         ☐ Add in game over
+            ☐ Check if there are no open node connections
+            ☐ Check if a game over trap is triggered
+            ☐ Check if current score multiplier is below one(?)
 
     ☐ Art:
         ☐ Make the fuse burn between rounds
@@ -26,3 +32,8 @@ Todo:
 
 Ideas:
     - Nodes connections will burn out if they are left open for too long
+        - Add a bonus that can reset the burn-out timer
+    - Add score multiplier bonus/trap
+        - If score multiplier goes under a threshold it can trigger game over
+    - Score multiplier could be how long the fuse burns for, the longer the fuse burns the higher the score
+    - At game over it could show an animation burning the fuse, counting up the score
