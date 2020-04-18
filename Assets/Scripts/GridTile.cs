@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class GridTile : MonoBehaviour, IOnClick, IHoverable
 {
@@ -24,6 +25,7 @@ public class GridTile : MonoBehaviour, IOnClick, IHoverable
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.color = defaultColor;
     }
 
     public void SetNodePrefab(GameObject nodePrefab)
@@ -40,9 +42,10 @@ public class GridTile : MonoBehaviour, IOnClick, IHoverable
 
     public void MouseDown()
     {
+        if (EventSystem.current.IsPointerOverGameObject()) return;
+
         spriteRenderer.color = clickColor;
         clicked = true;
-
 
         GameManager.SetSelectedGridTile(this);
     }
@@ -60,6 +63,8 @@ public class GridTile : MonoBehaviour, IOnClick, IHoverable
 
     public void HoverEnter()
     {
+        if (EventSystem.current.IsPointerOverGameObject()) return;
+
         spriteRenderer.color = hoverColor;
         hovered = true;
     }

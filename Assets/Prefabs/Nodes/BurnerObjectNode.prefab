@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-1599315775266756272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9215883481219982097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14b726c269189dd4bac8e0509a40f944, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activeConnectorPorts: 0
+  minPortAmount: 1
+  portOpenDuration: 2
+  portsOpenColor: {r: 1, g: 0.48037404, b: 0, a: 1}
+  portsClosedColor: {r: 1, g: 0, b: 0, a: 1}
+  noneSprite: {fileID: -1978200202960502808, guid: 201e05e9247f8cc4ea9ab28e1444628d,
+    type: 3}
+  directionSprites:
+  - {fileID: -8433754857259847872, guid: 201e05e9247f8cc4ea9ab28e1444628d, type: 3}
+  - {fileID: -8090900852883785204, guid: 201e05e9247f8cc4ea9ab28e1444628d, type: 3}
+  - {fileID: -1043910381489598433, guid: 201e05e9247f8cc4ea9ab28e1444628d, type: 3}
+  - {fileID: -8166210030674807990, guid: 201e05e9247f8cc4ea9ab28e1444628d, type: 3}
+  fuseBurnMultiplier: 0.25
+--- !u!1001 &7248974136182679548
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1980707126660056288, guid: d407e9ab89137fc4aaf2cbd80034ac2f,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1980707126660056288, guid: d407e9ab89137fc4aaf2cbd80034ac2f,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1980707126660056288, guid: d407e9ab89137fc4aaf2cbd80034ac2f,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1980707126660056288, guid: d407e9ab89137fc4aaf2cbd80034ac2f,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1980707126660056288, guid: d407e9ab89137fc4aaf2cbd80034ac2f,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1980707126660056288, guid: d407e9ab89137fc4aaf2cbd80034ac2f,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.008726535
+      objectReference: {fileID: 0}
+    - target: {fileID: 1980707126660056288, guid: d407e9ab89137fc4aaf2cbd80034ac2f,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.9999619
+      objectReference: {fileID: 0}
+    - target: {fileID: 1980707126660056288, guid: d407e9ab89137fc4aaf2cbd80034ac2f,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1980707126660056288, guid: d407e9ab89137fc4aaf2cbd80034ac2f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1980707126660056288, guid: d407e9ab89137fc4aaf2cbd80034ac2f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1980707126660056288, guid: d407e9ab89137fc4aaf2cbd80034ac2f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1980707126660056301, guid: d407e9ab89137fc4aaf2cbd80034ac2f,
+        type: 3}
+      propertyPath: m_Name
+      value: BurnerObjectNode
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d407e9ab89137fc4aaf2cbd80034ac2f, type: 3}
+--- !u!1 &9215883481219982097 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1980707126660056301, guid: d407e9ab89137fc4aaf2cbd80034ac2f,
+    type: 3}
+  m_PrefabInstance: {fileID: 7248974136182679548}
+  m_PrefabAsset: {fileID: 0}

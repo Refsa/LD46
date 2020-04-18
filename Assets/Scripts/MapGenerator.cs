@@ -17,6 +17,11 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] GameObject fuseNodePrefab;
     [SerializeField] GameObject objectNodePrefab;
 
+    [Header("Object Node Prefabs")]
+    [SerializeField] GameObject scoreMultiplierObjectNodePrefab;
+    [SerializeField] GameObject connectorObjectNodePrefab;
+    [SerializeField] GameObject burnerObjectNodePrefab;
+
     [Header("Components")]
     [SerializeField] Grid grid;
     
@@ -53,7 +58,23 @@ public class MapGenerator : MonoBehaviour
             }
 
             var tile = grid.GetTile(pos.x, pos.y);
-            var nodePrefab = GameObject.Instantiate(objectNodePrefab);
+
+            ObjectNodeType objectNodeType = ObjectNode.GetRandomObjectNodeType();
+            GameObject nodePrefab = null;
+
+            switch (objectNodeType)
+            {
+                case ObjectNodeType.Burner:
+                    nodePrefab = GameObject.Instantiate(burnerObjectNodePrefab);
+                    break;
+                case ObjectNodeType.Connector:
+                    nodePrefab = GameObject.Instantiate(connectorObjectNodePrefab);
+                    break;
+                case ObjectNodeType.ScoreMultiplier:
+                    nodePrefab = GameObject.Instantiate(scoreMultiplierObjectNodePrefab);
+                    break;
+            }
+
             nodePrefab.GetComponent<NodeBase>().Randomize();
 
             tile.SetNodePrefab(nodePrefab);

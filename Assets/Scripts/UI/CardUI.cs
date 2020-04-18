@@ -6,11 +6,16 @@ using UnityEngine.UI;
 public class CardUI : MonoBehaviour, IHoverable, IOnClick
 {
     [SerializeField] Image previewImage;
+    [SerializeField] Image borderImage;
+
+    [SerializeField] Color hoverColor = Color.white;
+    [SerializeField] Color selectedColor = Color.gray;
 
     GameObject nodePrefab;
     public GameObject NodePrefab => nodePrefab;
 
     bool hovering = false;
+    bool selected = false;
 
     public void SetPreviewImage(Sprite sprite)
     {
@@ -34,28 +39,44 @@ public class CardUI : MonoBehaviour, IHoverable, IOnClick
 
     public void HoverEnter()
     {
-        previewImage.color = new Color(0.5f, 1f, 0.9f, 1f);
+        if (selected) return;
+
+        borderImage.color = hoverColor;
         hovering = true;
     }
 
     public void HoverExit()
     {
-        previewImage.color = Color.white;
+        if (selected) return;
+
+        borderImage.color = Color.white;
         hovering = false;
     }
 
     public void MouseDown()
     {
-        previewImage.color = new Color(1f, 0.5f, 0.9f, 1f);
+        borderImage.color = selectedColor;
 
         GameManager.SetSelectedNodeCard(this);
     }
 
     public void MouseUp()
     {
-        if (hovering)
+        /* if (hovering)
             HoverEnter();
         else
-            previewImage.color = Color.white;
+            previewImage.color = Color.white; */
+    }
+
+    public void Select(bool status)
+    {
+        selected = status;
+
+        if (borderImage == null) return;
+
+        if (status)
+            borderImage.color = selectedColor;
+        else
+            borderImage.color = Color.white;
     }
 }

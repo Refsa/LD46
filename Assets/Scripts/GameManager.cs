@@ -19,6 +19,10 @@ public class GameManager : MonoBehaviour
     List<GridTile> placedTiles;
     GridTile startTile;
 
+    float currentScoreMultiplier = 1f;
+    float fuseBurnRateMultiplier = 1f;
+    float score = 0f;
+
     private void Awake() 
     {
         if (instance == null) instance = this;
@@ -33,7 +37,7 @@ public class GameManager : MonoBehaviour
         placedTiles = new List<GridTile>();
 
         startTile = mapGenerator.PlaceStartTile();
-        startTile.NodeBase.StartFuse();
+        startTile.NodeBase.Execute();
         placedTiles.Add(startTile);
 
         mapGenerator.Generate();
@@ -42,13 +46,25 @@ public class GameManager : MonoBehaviour
         {
             GenerateRandomCard();
         }
+
+        UIManager.ShowGameUI();
     }
 
     private void Update()
     {
         if (placedTiles.Count > 0 && placedTiles.TrueForAll(e => !e.NodeBase.PortsOpen))
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            ScoreInfo scoreInfo = new ScoreInfo();
+            scoreInfo.Score = 0f;
+            scoreInfo.ScoreMultiplier = currentScoreMultiplier;
+            scoreInfo.BurnRate = fuseBurnRateMultiplier;
+            scoreInfo.PathLength = placedTiles.Count;
+            scoreInfo.OpenConnections = 0;
+            scoreInfo.ConnectionsMade = scoreInfo.PathLength * 10;
+
+            scoreInfo.CalculateScore();
+
+            UIManager.ShowGameOverUI(scoreInfo);
         }
     }
 
@@ -148,6 +164,32 @@ public class GameManager : MonoBehaviour
 
     public static void SetSelectedNodeCard(CardUI cardUi)
     {
+        instance.selectedCard?.Select(false);
+
         instance.selectedCard = cardUi;
+        instance.selectedCard.Select(true);
+    }
+
+    public static void AddToScoreMultiplier(float value)
+    {
+        instance.currentScoreMultiplier += value;
+
+        UIManager.ScoreUI.SetScoreMultiplier(instance.currentScoreMultiplier);
+
+        UnityEngine.Debug.Log($"Score Multi Changed {instance.currentScoreMultiplier}");
+    }
+
+    public static void AddToFuseBurnTimeMultiplier(float value)
+    {
+        instance.fuseBurnRateMultiplier += value;
+
+        instance.placedTiles.Where(e => e.NodeBase.PortsOpen).All(e => {e.NodeBase.BurnRateMultiplier = instance.fuseBurnRateMultiplier; return false;});
+
+        UnityEngine.Debug.Log($"Burn Rate Changed {instance.fuseBurnRateMultiplier}");
+    }
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

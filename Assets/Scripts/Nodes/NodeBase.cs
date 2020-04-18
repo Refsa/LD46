@@ -45,11 +45,14 @@ public class NodeBase : MonoBehaviour
     public bool PortsOpen => portsOpen;
 
 
+    float burnRateMultiplier = 1f;
+    public float BurnRateMultiplier { get => burnRateMultiplier; set => burnRateMultiplier = value; }
+
     static System.Array enumValues;
 
     float portsOpenTime;
     bool portsOpen = true;
-    bool started = false;
+    protected bool started = false;
     bool isSetup = false;
 
     bool connectedToRoot = false;
@@ -81,7 +84,7 @@ public class NodeBase : MonoBehaviour
 
         if (portsOpen)
         {
-            portsOpenTime -= Time.deltaTime;
+            portsOpenTime -= Time.deltaTime / burnRateMultiplier;
             portsOpen = portsOpenTime >= 0f;
 
             spriteRenderer.color = Color.Lerp(portsClosedColor, portsOpenColor, portsOpenTime / portOpenDuration);
@@ -94,10 +97,15 @@ public class NodeBase : MonoBehaviour
         }
     }
 
-    public void StartFuse()
+    public virtual void Execute()
     {
         if (started) return;
 
+        StartFuse();
+    }
+
+    void StartFuse()
+    {
         started = true;
 
         portsOpenTime = portOpenDuration;
@@ -108,7 +116,7 @@ public class NodeBase : MonoBehaviour
     {
         for (int i = 0; i < 4; i++)
         {
-            connectedNodes[i]?.StartFuse();
+            connectedNodes[i]?.Execute();
         }
     }
 
