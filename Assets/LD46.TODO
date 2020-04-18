@@ -1,0 +1,28 @@
+Todo:
+    ☐ Create Fog-Of-War system
+    ☐ Allow dragging cards onto empty nodes on map
+        ☐ Only allow to place a tile if it can connect to the tiles on the map
+        ☐ Create a Hand manager that handles the actual card data
+        ☐ Update HandUI to remove/add cards
+    ☐ Level Generation
+        ☐ Place the starting tile
+        ☐ Generate traps and bonuses
+            Bonuses:
+                ☐ Score Multiplier
+    ☐ Game System
+        ☐ Add in rounds
+            ☐ Give card at start of round
+            ☐ Place card on map, remove card from hand
+            ☐ Check game over
+            ☐ Generate score, show acquired bonuses
+            ☐ Start next round
+        ☐ Add in highscore
+        ☐ Add in game over
+
+    ☐ Art:
+        ☐ Make the fuse burn between rounds
+        ☐ Add some easing to UI animations
+        ☐ Add some fancy easing to tile spawning
+
+Ideas:
+    - Nodes connections will burn out if they are left open for too long
