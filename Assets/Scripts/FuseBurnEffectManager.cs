@@ -1,13 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class FuseBurnEffectManager : MonoBehaviour
 {
+    const int MaxFuseEffectPoolSize = 200;
+
     static FuseBurnEffectManager instance;
 
     [SerializeField] GameObject fuseEffectPrefab;
     [SerializeField] int fuseObjectPoolSize = 100;
+    [SerializeField] Transform fuseObjectPoolContainer;
+
+    [SerializeField] int ActiveFuses;
 
     List<FuseBurnEffectController> activeFuses;
     Queue<GameObject> fuseObjectPool;
@@ -32,13 +38,12 @@ public class FuseBurnEffectManager : MonoBehaviour
         {
             if (fuse.Tick())
             {
-                if (fuse.NextTile.NodeBase != null)
+                if (NextTileHasMatchingConnections(fuse.CurrentTile, fuse.NextTile))
                 {
                     var nextTiles = FindOpenConnections(fuse.CurrentTile, fuse.NextTile, fuse.NextTile.GridPos);
 
                     if (nextTiles.Count == 0) 
                     {
-                        UnityEngine.Debug.Log($"Release Fuse");
                         toRelease.Add(fuse);
                     }
                     else
@@ -67,12 +72,61 @@ public class FuseBurnEffectManager : MonoBehaviour
             }
         }
 
-        toRelease.ForEach(e =>{
+        toAdd.ForEach(e => AddActiveFuse(e));
+
+        toRelease.ForEach(e => {
             ReleaseFuseObject(e.gameObject);
             activeFuses.Remove(e);
         });
 
-        toAdd.ForEach(e => AddActiveFuse(e));
+
+        ActiveFuses = activeFuses.Count;
+    }
+
+    bool NextTileHasMatchingConnections(GridTile current, GridTile next)
+    {
+        if (next.NodeBase == null || !next.NodeBase.PortsOpen) return false;
+
+        Vector2Int nextTileDir = next.GridPos - current.GridPos;
+        
+        if (nextTileDir.x > 0)
+        {
+            ConnectorPorts nextFlag = ConnectorPorts.Left;
+
+            if (next.NodeBase.ConnectorPorts.HasFlag(nextFlag))
+            {
+                return true;
+            }
+        }
+        else if (nextTileDir.x < 0)
+        {
+            ConnectorPorts nextFlag = ConnectorPorts.Right;
+
+            if (next.NodeBase.ConnectorPorts.HasFlag(nextFlag))
+            {
+                return true;
+            }
+        }
+        else if (nextTileDir.y > 0)
+        {
+            ConnectorPorts nextFlag = ConnectorPorts.Down;
+
+            if (next.NodeBase.ConnectorPorts.HasFlag(nextFlag))
+            {
+                return true;
+            }
+        }
+        else if (nextTileDir.y < 0)
+        {
+            ConnectorPorts nextFlag = ConnectorPorts.Up;
+
+            if (next.NodeBase.ConnectorPorts.HasFlag(nextFlag))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     List<GridTile> FindOpenConnections(GridTile current, GridTile next, Vector2Int _pos)
@@ -89,24 +143,40 @@ public class FuseBurnEffectManager : MonoBehaviour
                 // ConnectorPorts otherFlag = (ConnectorPorts)(1 << i + GameManager.Instance.portFlagLookup[i]);
 
                 if (otherNode != current && otherNode != next)
+                {
+                    if (otherNode.NodeBase != null && otherNode.NodeBase.PortsOpenNormalizedTime > 0.9f) continue;
+
                     nextTiles.Add(otherNode);
+                }
             }
         }
         return nextTiles;
     }
 
-    void ExpandFuseObjectPool()
+    bool ExpandFuseObjectPool()
     {
+        if (activeFuses.Count + fuseObjectPool.Count > MaxFuseEffectPoolSize) return false;
+
         for (int i = 0; i < fuseObjectPoolSize; i++)
         {
-            var newFuseObject = GameObject.Instantiate(fuseEffectPrefab, Vector3.zero, Quaternion.identity);
+            var newFuseObject = GameObject.Instantiate(fuseEffectPrefab, fuseObjectPoolContainer);
             newFuseObject.SetActive(false);
             fuseObjectPool.Enqueue(newFuseObject);
         }
+
+        return true;
     }
 
     public void AddActiveFuse(FuseBurnEffectController fuseObject)
     {
+        // if (activeFuses.Find(e => e.NextTile == fuseObject.NextTile) == null)
+            // activeFuses.Add(fuseObject);
+        // else
+            // ReleaseFuseObject(fuseObject.gameObject);
+
+        if (activeFuses.Find(e => e.NextTile == fuseObject.NextTile) != null)
+            fuseObject.Mirror = true;
+
         activeFuses.Add(fuseObject);
     }
 
@@ -116,8 +186,12 @@ public class FuseBurnEffectManager : MonoBehaviour
         {
             return fuseObjectPool.Dequeue();
         }
-
-        ExpandFuseObjectPool();
+        
+        if (!ExpandFuseObjectPool())
+        {
+            ReleaseFuseObject(activeFuses[0].gameObject);
+            activeFuses.RemoveAt(0);
+        }
         return GetFuseObject();
     }
 
