@@ -5,6 +5,14 @@ using System.Linq;
 using UnityEngine.SceneManagement;
 using Unity.Mathematics;
 
+public enum GameState
+{
+    Tutorial,
+    StartGame,
+    Game,
+    GameOver
+}
+
 public class GameManager : MonoBehaviour
 {
     public readonly Vector2Int[] portDirections = 
@@ -27,13 +35,18 @@ public class GameManager : MonoBehaviour
     [SerializeField] Camera mainCamera;
     public static Camera MainCamera;
 
+    static bool newlyOpenedGame = true;
+
+    GameState currentGameState;
+    public GameState CurrentGameState => currentGameState;
+    bool gameStarted = false;
+    public bool GameStarted => gameStarted;
+
     GridTile selectedGridTile;
     CardUI selectedCard;
 
     List<GridTile> placedTiles;
     GridTile startTile;
-
-    bool gameOver = false;
 
     float currentScoreMultiplier = 1f;
     float fuseBurnRateMultiplier = 1f;
@@ -58,7 +71,87 @@ public class GameManager : MonoBehaviour
 
     private void Start() 
     {
-        gameOver = false;
+        if (newlyOpenedGame)
+        {
+            UIManager.ShowTutorialUI();
+            currentGameState = GameState.Tutorial;
+            newlyOpenedGame = false;
+            return;
+        }
+
+        StartNewGame();
+    }
+
+    private void Update()
+    {
+        if (currentGameState == GameState.Tutorial)
+        {
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                if (!gameStarted)
+                    SetGameState(GameState.StartGame);
+                else
+                    SetGameState(GameState.Game);
+            }
+        }
+        if (currentGameState != GameState.Game) return;
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            SetGameState(GameState.Tutorial);
+        }
+
+        placedTiles.ForEach(e => e.NodeBase.Tick());
+
+        if (placedTiles.Count > 0 && placedTiles.TrueForAll(e => !e.NodeBase.PortsOpen))
+        {
+            SetGameState(GameState.GameOver);
+            return;
+        }
+        else
+        {
+            if (Time.time - lastBurnRateBleepTime > currentBurnRateBleepInterval / fuseLengthMultiplier)
+            {
+                SoundManager.PlayBurnRateBeep();
+                lastBurnRateBleepTime = Time.time;
+
+                float startRampUpTime = 8f; // Where the ramp up starts
+                float expFactor = 3f; // How much it ramps up
+                float fuseTimeLeft = placedTiles.Sum(e => e.NodeBase.PortsOpenTime);
+                float fuseTimeNorm = (1f - Mathf.Clamp01(fuseTimeLeft / startRampUpTime));
+                fuseLengthMultiplier = 1f + math.exp(fuseTimeNorm * expFactor);
+            }
+        }
+    }
+
+    public void SetGameState(GameState gameState)
+    {
+        currentGameState = gameState;
+
+        switch(gameState)
+        {
+            case GameState.Tutorial:
+                UIManager.ShowTutorialUI();
+                break;
+            case GameState.StartGame:
+                StartNewGame();
+                break;
+            case GameState.Game:
+                UIManager.ShowGameUI();
+                break;
+            case GameState.GameOver:
+                GameOverState();
+                break;
+        }
+    }
+
+    public void StartNewGame()
+    {
+        if (gameStarted) 
+        {
+            SetGameState(GameState.Game);
+            return;
+        }
+
         placedTiles = new List<GridTile>();
 
         startTile = mapGenerator.PlaceStartTile();
@@ -87,46 +180,29 @@ public class GameManager : MonoBehaviour
 
             fuseBurnEffectManager.AddActiveFuse(fuseObject);
         }
+
+        SetGameState(GameState.Game);
+        gameStarted = true;
     }
 
-    private void Update()
+    void GameOverState()
     {
-        if (gameOver) return;
+        SoundManager.PlayGameOverSound();
 
-        if (placedTiles.Count > 0 && placedTiles.TrueForAll(e => !e.NodeBase.PortsOpen))
-        {
-            SoundManager.PlayGameOverSound();
+        ScoreInfo scoreInfo = new ScoreInfo();
+        scoreInfo.Score = 0f;
+        scoreInfo.ScoreMultiplier = currentScoreMultiplier;
+        scoreInfo.BurnRate = fuseBurnRateMultiplier;
+        scoreInfo.PathLength = placedTiles.Count;
 
-            ScoreInfo scoreInfo = new ScoreInfo();
-            scoreInfo.Score = 0f;
-            scoreInfo.ScoreMultiplier = currentScoreMultiplier;
-            scoreInfo.BurnRate = fuseBurnRateMultiplier;
-            scoreInfo.PathLength = placedTiles.Count;
+        scoreInfo.OpenConnections = math.max(1, placedTiles.Sum(e => e.NodeBase.CountOpenPorts()));
+        scoreInfo.ConnectionsMade = (int) math.ceil(placedTiles.Sum(e => e.NodeBase.CountUsedPorts()) / 2f);
 
-            scoreInfo.OpenConnections = math.max(1, placedTiles.Sum(e => e.NodeBase.CountOpenPorts()));
-            scoreInfo.ConnectionsMade = (int) math.ceil(placedTiles.Sum(e => e.NodeBase.CountUsedPorts()) / 2f);
+        scoreInfo.CalculateScore();
 
-            scoreInfo.CalculateScore();
+        UIManager.ShowGameOverUI(scoreInfo);
 
-            UIManager.ShowGameOverUI(scoreInfo);
-
-            gameOver = true;
-            return;
-        }
-        else
-        {
-            if (Time.time - lastBurnRateBleepTime > currentBurnRateBleepInterval / fuseLengthMultiplier)
-            {
-                SoundManager.PlayBurnRateBeep();
-                lastBurnRateBleepTime = Time.time;
-
-                float startRampUpTime = 8f; // Where the ramp up starts
-                float expFactor = 3f; // How much it ramps up
-                float fuseTimeLeft = placedTiles.Sum(e => e.NodeBase.PortsOpenTime);
-                float fuseTimeNorm = (1f - Mathf.Clamp01(fuseTimeLeft / startRampUpTime));
-                fuseLengthMultiplier = 1f + math.exp(fuseTimeNorm * expFactor);
-            }
-        }
+        currentGameState = GameState.GameOver;
     }
 
     void GenerateRandomCard()

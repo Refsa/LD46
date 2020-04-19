@@ -134,7 +134,7 @@ public class NodeBase : MonoBehaviour
         Setup();
     }
 
-    void Update() 
+    public void Tick()
     {
         if (!started) return;
 

@@ -38,6 +38,8 @@ public class FuseBurnEffectManager : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.Instance.CurrentGameState != GameState.Game) return;
+
         List<FuseBurnEffectController> toRelease = new List<FuseBurnEffectController>();
         List<FuseBurnEffectController> toAdd = new List<FuseBurnEffectController>();
 
