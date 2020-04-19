@@ -16,6 +16,8 @@ public class BurnerObjectNode : ObjectNode
         base.Execute();
         if (!started) return;
 
+        SoundManager.PlayDebuffPickupSound();
+
         GameManager.AddToFuseBurnTimeMultiplier(fuseBurnMultiplier);
     }
 }

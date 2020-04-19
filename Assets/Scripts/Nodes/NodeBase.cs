@@ -55,6 +55,7 @@ public class NodeBase : MonoBehaviour
     float portsOpenTime;
     float portsOpenNormalizedTime;
 
+    public float PortsOpenTime => portsOpenTime;
     public float PortsOpenNormalizedTime => portsOpenNormalizedTime;
 
     bool portsOpen = true;
@@ -77,6 +78,9 @@ public class NodeBase : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         openConnectorPorts = activeConnectorPorts;
         spriteRenderer.color = portsOpenColor;
+
+        portsOpenTime = portOpenDuration;
+        portsOpen = true;
 
         if (enumValues == null)
             enumValues = System.Enum.GetValues(typeof(ConnectorPorts));
@@ -107,7 +111,7 @@ public class NodeBase : MonoBehaviour
             portsOpen = portsOpenTime >= 0f;
             portsOpenNormalizedTime = 1f - (portsOpenTime / portOpenDuration);
 
-            // spriteRenderer.color = Color.Lerp(portsOpenColor, portsClosedColor, portsOpenNormalizedTime);
+            spriteRenderer.color = Color.Lerp(portsOpenColor, portsClosedColor, portsOpenNormalizedTime);
 
             if (!portsOpen)
             {

@@ -44,6 +44,15 @@ Todo:
         ☐ Add some fancy easing to tile spawning
         ☐ Vignette shader around the edges of the screen
 
+Sound:
+    ☐ Fuse burn sound
+        ☐ Increase rate with burn rate multiplier
+        ☐ Increase rate with unburnt fuse length
+    ☐ Background music
+    ☐ Objective Node Activated
+        ☐ Score Multiplier
+        ☐ Burn Rate Increased
+
 Ideas:
     - Nodes connections will burn out if they are left open for too long
         - Add a bonus that can reset the burn-out timer
@@ -61,14 +70,14 @@ Schedule:
     8AM-9AM - Sleep/Rest
     10AM-11AM - Sleep/Rest
     11AM-12PM - Sleep/Rest
-    ☐ 12PM-1PM - Fuse Burning
-    ☐ 1PM-2PM - Fuse Burning
-    ☐ 2PM-3PM - Art / Mechanics
-    ☐ 3PM-4PM - Art / Mechanics
-    ☐ 4PM-5PM - Art / Mechanics
-    ☐ 5PM-6PM - Art / Mechanics
-    ☐ 6PM-7PM - Art / Mechanics
-    ☐ 7PM-8PM - Art / Mechanics
+    12PM-1PM - Fuse Burning
+    1PM-2PM - Fuse Burning
+    2PM-3PM - Art / Mechanics
+    3PM-4PM - Art
+    4PM-5PM - Art
+    ☐ 5PM-6PM - Art
+    ☐ 6PM-7PM - Mechanics
+    ☐ 7PM-8PM - Mechanics
     ☐ 8PM-9PM - Game Balance
     ☐ 9PM-10PM - Game Balance
     ☐ 10PM-11PM - Create Tutorial UI

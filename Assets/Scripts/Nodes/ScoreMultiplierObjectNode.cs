@@ -16,6 +16,8 @@ public class ScoreMultiplierObjectNode : ObjectNode
         base.Execute();
         if (!started) return;
 
+        SoundManager.PlayBuffPickupSound();
+
         GameManager.AddToScoreMultiplier(scoreMultiplierBonus);
     }
 }

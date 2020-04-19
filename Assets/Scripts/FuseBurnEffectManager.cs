@@ -9,14 +9,19 @@ public class FuseBurnEffectManager : MonoBehaviour
 
     static FuseBurnEffectManager instance;
 
+    [Header("Effect")]
     [SerializeField] GameObject fuseEffectPrefab;
     [SerializeField] int fuseObjectPoolSize = 100;
     [SerializeField] Transform fuseObjectPoolContainer;
 
-    [SerializeField] int ActiveFuses;
+    [Header("Sound")]
+    [SerializeField] float fuseBurnSoundInterval = 0.25f;
 
     List<FuseBurnEffectController> activeFuses;
     Queue<GameObject> fuseObjectPool;
+
+    float lastFuseBurnSoundTime;
+    float currentFuseBurnSoundInterval;
 
     private void Awake()
     {
@@ -27,6 +32,8 @@ public class FuseBurnEffectManager : MonoBehaviour
         fuseObjectPool = new Queue<GameObject>();
 
         ExpandFuseObjectPool();
+
+        currentFuseBurnSoundInterval = fuseBurnSoundInterval;
     }
 
     void Update()
@@ -72,15 +79,18 @@ public class FuseBurnEffectManager : MonoBehaviour
             }
         }
 
+        if (activeFuses.Count > 0 && Time.time - lastFuseBurnSoundTime > currentFuseBurnSoundInterval)
+        {
+            SoundManager.PlayFuseBrunBeep();
+            lastFuseBurnSoundTime = Time.time;
+        }
+
         toAdd.ForEach(e => AddActiveFuse(e));
 
         toRelease.ForEach(e => {
             ReleaseFuseObject(e.gameObject);
             activeFuses.Remove(e);
         });
-
-
-        ActiveFuses = activeFuses.Count;
     }
 
     bool NextTileHasMatchingConnections(GridTile current, GridTile next)

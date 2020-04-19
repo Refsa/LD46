@@ -32,9 +32,16 @@ public class GameManager : MonoBehaviour
     List<GridTile> placedTiles;
     GridTile startTile;
 
+    bool gameOver = false;
+
     float currentScoreMultiplier = 1f;
     float fuseBurnRateMultiplier = 1f;
     float score = 0f;
+
+    float burnRateBleepInterval = 1f;
+    float currentBurnRateBleepInterval;
+    float lastBurnRateBleepTime;
+    float fuseLengthMultiplier = 1f;
 
     private void Awake() 
     {
@@ -44,10 +51,13 @@ public class GameManager : MonoBehaviour
         MainCamera = mainCamera;
         mapGenerator = FindObjectOfType<MapGenerator>();
         fuseBurnEffectManager = FindObjectOfType<FuseBurnEffectManager>();
+
+        currentBurnRateBleepInterval = burnRateBleepInterval * fuseBurnRateMultiplier;
     }
 
     private void Start() 
     {
+        gameOver = false;
         placedTiles = new List<GridTile>();
 
         startTile = mapGenerator.PlaceStartTile();
@@ -80,8 +90,12 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        if (gameOver) return;
+
         if (placedTiles.Count > 0 && placedTiles.TrueForAll(e => !e.NodeBase.PortsOpen))
         {
+            SoundManager.PlayGameOverSound();
+
             ScoreInfo scoreInfo = new ScoreInfo();
             scoreInfo.Score = 0f;
             scoreInfo.ScoreMultiplier = currentScoreMultiplier;
@@ -93,6 +107,20 @@ public class GameManager : MonoBehaviour
             scoreInfo.CalculateScore();
 
             UIManager.ShowGameOverUI(scoreInfo);
+
+            gameOver = true;
+            return;
+        }
+        else
+        {
+            if (Time.time - lastBurnRateBleepTime > currentBurnRateBleepInterval / fuseLengthMultiplier)
+            {
+                SoundManager.PlayBurnRateBeep();
+                lastBurnRateBleepTime = Time.time;
+
+                float openTiles = placedTiles.Sum(e => e.NodeBase.PortsOpenTime);
+                fuseLengthMultiplier = 1f + (1f - Mathf.Clamp01(openTiles / 10f)) * 5f;
+            }
         }
     }
 
@@ -193,16 +221,20 @@ public class GameManager : MonoBehaviour
 
         UIManager.ScoreUI.SetScoreMultiplier(instance.currentScoreMultiplier);
 
-        UnityEngine.Debug.Log($"Score Multi Changed {instance.currentScoreMultiplier}");
+        // UnityEngine.Debug.Log($"Score Multi Changed {instance.currentScoreMultiplier}");
     }
 
     public static void AddToFuseBurnTimeMultiplier(float value)
     {
         instance.fuseBurnRateMultiplier += value;
 
+        instance.currentBurnRateBleepInterval = instance.burnRateBleepInterval / instance.fuseBurnRateMultiplier;
+
         instance.placedTiles.Where(e => e.NodeBase.PortsOpen).All(e => {e.NodeBase.BurnRateMultiplier = instance.fuseBurnRateMultiplier; return false;});
 
-        UnityEngine.Debug.Log($"Burn Rate Changed {instance.fuseBurnRateMultiplier}");
+        UIManager.ScoreUI.SetBurnRateMultiplier(instance.currentScoreMultiplier);
+
+        // UnityEngine.Debug.Log($"Burn Rate Changed {instance.fuseBurnRateMultiplier}");
     }
 
     public void RestartGame()
