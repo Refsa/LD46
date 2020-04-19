@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.SceneManagement;
+using Unity.Mathematics;
 
 public class GameManager : MonoBehaviour
 {
@@ -118,8 +119,11 @@ public class GameManager : MonoBehaviour
                 SoundManager.PlayBurnRateBeep();
                 lastBurnRateBleepTime = Time.time;
 
-                float openTiles = placedTiles.Sum(e => e.NodeBase.PortsOpenTime);
-                fuseLengthMultiplier = 1f + (1f - Mathf.Clamp01(openTiles / 10f)) * 5f;
+                float startRampUpTime = 8f; // Where the ramp up starts
+                float expFactor = 3f; // How much it ramps up
+                float fuseTimeLeft = placedTiles.Sum(e => e.NodeBase.PortsOpenTime);
+                float fuseTimeNorm = (1f - Mathf.Clamp01(fuseTimeLeft / startRampUpTime));
+                fuseLengthMultiplier = 1f + math.exp(fuseTimeNorm * expFactor);
             }
         }
     }

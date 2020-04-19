@@ -46,7 +46,7 @@ public class SoundManager : MonoBehaviour
 
     public static void PlayGameOverSound()
     {
-        instance.pickupAudioSource.PlayOneShot(instance.gameOverSound);
+        instance.pickupAudioSource.PlayOneShot(instance.gameOverSound, 1f);
     }
 
     public static void PlayOneShot(AudioClip clip)
