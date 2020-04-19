@@ -16,7 +16,7 @@ public struct ScoreInfo
 
     public void CalculateScore()
     {
-        Score = ((((float)ConnectionsMade / (float)(OpenConnections + 1)) * (float)PathLength * FuseLengthWeight) * ScoreMultiplier) / BurnRate;
+        Score = ((((float)ConnectionsMade / (float)(OpenConnections)) * (float)PathLength * FuseLengthWeight) * ScoreMultiplier) / BurnRate;
     }
 }
 

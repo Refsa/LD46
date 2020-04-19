@@ -102,8 +102,9 @@ public class GameManager : MonoBehaviour
             scoreInfo.ScoreMultiplier = currentScoreMultiplier;
             scoreInfo.BurnRate = fuseBurnRateMultiplier;
             scoreInfo.PathLength = placedTiles.Count;
-            scoreInfo.OpenConnections = placedTiles.Sum(e => e.NodeBase.UsedPorts);
-            scoreInfo.ConnectionsMade = placedTiles.Sum(e => e.NodeBase.OpenPortsLeft);
+
+            scoreInfo.OpenConnections = math.max(1, placedTiles.Sum(e => e.NodeBase.CountOpenPorts()));
+            scoreInfo.ConnectionsMade = (int) math.ceil(placedTiles.Sum(e => e.NodeBase.CountUsedPorts()) / 2f);
 
             scoreInfo.CalculateScore();
 

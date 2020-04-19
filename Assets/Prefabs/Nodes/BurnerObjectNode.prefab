@@ -20,10 +20,10 @@ MonoBehaviour:
   noneSprite: {fileID: -1978200202960502808, guid: 201e05e9247f8cc4ea9ab28e1444628d,
     type: 3}
   directionSprites:
-  - {fileID: -8433754857259847872, guid: 201e05e9247f8cc4ea9ab28e1444628d, type: 3}
-  - {fileID: -8090900852883785204, guid: 201e05e9247f8cc4ea9ab28e1444628d, type: 3}
-  - {fileID: -1043910381489598433, guid: 201e05e9247f8cc4ea9ab28e1444628d, type: 3}
-  - {fileID: -8166210030674807990, guid: 201e05e9247f8cc4ea9ab28e1444628d, type: 3}
+  - {fileID: -6652909767261567181, guid: 201e05e9247f8cc4ea9ab28e1444628d, type: 3}
+  - {fileID: -4176440482649311133, guid: 201e05e9247f8cc4ea9ab28e1444628d, type: 3}
+  - {fileID: 4823369774484437639, guid: 201e05e9247f8cc4ea9ab28e1444628d, type: 3}
+  - {fileID: -871365454122174320, guid: 201e05e9247f8cc4ea9ab28e1444628d, type: 3}
   fuseBurnMultiplier: 0.25
 --- !u!1001 &7248974136182679548
 PrefabInstance:

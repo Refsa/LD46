@@ -67,8 +67,41 @@ public class NodeBase : MonoBehaviour
 
     int portCount;
 
+    public int PortCount => portCount;
     public int OpenPortsLeft => UsedPorts - portCount;
     public int UsedPorts => math.max(connectedNodes.Where(e => e != null).Count(), portCount);
+
+    public int CountOpenPorts()
+    {
+        int count = 0;
+        for (int i = 0; i < 4; i++)
+        {
+            ConnectorPorts flag = (ConnectorPorts)(1 << i);
+
+            if (ConnectorPorts.HasFlag(flag) && ConnectedNodes[i] == null)
+            {   
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public int CountUsedPorts()
+    {
+        int count = 0;
+        for (int i = 0; i < 4; i++)
+        {
+            ConnectorPorts flag = (ConnectorPorts)(1 << i);
+
+            if (ConnectorPorts.HasFlag(flag) && ConnectedNodes[i] != null)
+            {   
+                count++;
+            }
+        }
+
+        return count;
+    }
 
     public void Setup()
     {
@@ -231,6 +264,8 @@ public class NodeBase : MonoBehaviour
 
         openConnectorPorts = activeConnectorPorts;
         SetSprite();
+
+        portCount = openPorts;
     }
 
     public (Sprite, int) GenerateRandomNode()
@@ -244,4 +279,22 @@ public class NodeBase : MonoBehaviour
 
         return (sprite, rotation);
     }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmos() 
+    {
+        if (!Application.isPlaying && connectedToRoot) return;  
+
+        for (int i = 0; i < 4; i++)
+        {
+            ConnectorPorts flag = (ConnectorPorts)(1 << i);
+
+            if (ConnectorPorts.HasFlag(flag) && ConnectedNodes[i] == null)
+            {   
+                Vector3 center = transform.position + new Vector3(GameManager.Instance.portDirections[i].x, GameManager.Instance.portDirections[i].y, 0f) / 2f;
+                Gizmos.DrawSphere(center, 0.15f);
+            }
+        }
+    }
+#endif
 }

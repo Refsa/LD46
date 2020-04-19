@@ -20,10 +20,10 @@ MonoBehaviour:
   noneSprite: {fileID: -1978200202960502808, guid: 201e05e9247f8cc4ea9ab28e1444628d,
     type: 3}
   directionSprites:
-  - {fileID: -8433754857259847872, guid: 201e05e9247f8cc4ea9ab28e1444628d, type: 3}
-  - {fileID: -8090900852883785204, guid: 201e05e9247f8cc4ea9ab28e1444628d, type: 3}
-  - {fileID: -1043910381489598433, guid: 201e05e9247f8cc4ea9ab28e1444628d, type: 3}
-  - {fileID: -8166210030674807990, guid: 201e05e9247f8cc4ea9ab28e1444628d, type: 3}
+  - {fileID: -9201065791017001165, guid: 201e05e9247f8cc4ea9ab28e1444628d, type: 3}
+  - {fileID: 2317769578810846705, guid: 201e05e9247f8cc4ea9ab28e1444628d, type: 3}
+  - {fileID: -2318844589878982745, guid: 201e05e9247f8cc4ea9ab28e1444628d, type: 3}
+  - {fileID: -7124917599888780934, guid: 201e05e9247f8cc4ea9ab28e1444628d, type: 3}
   scoreMultiplierBonus: 0.25
 --- !u!1001 &4293396005181611539
 PrefabInstance:
