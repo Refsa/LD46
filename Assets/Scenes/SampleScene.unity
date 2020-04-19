@@ -171,7 +171,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_UiScaleMode: 1
-  m_ReferencePixelsPerUnit: 100
+  m_ReferencePixelsPerUnit: 150
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1280, y: 720}
   m_ScreenMatchMode: 0
@@ -862,6 +862,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1543114853}
   - component: {fileID: 1543114852}
+  - component: {fileID: 1543114854}
   m_Layer: 0
   m_Name: Map
   m_TagString: Untagged
@@ -912,6 +913,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1543114854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1543114851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0110f8e5323b46647af03854bb7d7758, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fuseEffectPrefab: {fileID: 6054130223947365088, guid: 9c21df6fdad1250489e213f73248a640,
+    type: 3}
+  fuseObjectPoolSize: 100
 --- !u!224 &1700962435 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4999178708846679210, guid: c63b603f940f8c443838a2b556940d23,
@@ -1165,7 +1181,7 @@ PrefabInstance:
     - target: {fileID: 4999178708846679211, guid: c63b603f940f8c443838a2b556940d23,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4999178709684797886, guid: c63b603f940f8c443838a2b556940d23,
         type: 3}
@@ -1201,6 +1217,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 280311686}
     m_Modifications:
+    - target: {fileID: 398721463, guid: 640503c504c3e6d4c87e670075d32f06, type: 3}
+      propertyPath: m_Color.r
+      value: 0.29803923
+      objectReference: {fileID: 0}
+    - target: {fileID: 398721463, guid: 640503c504c3e6d4c87e670075d32f06, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 398721463, guid: 640503c504c3e6d4c87e670075d32f06, type: 3}
+      propertyPath: m_PixelsPerUnitMultiplier
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 471271533, guid: 640503c504c3e6d4c87e670075d32f06, type: 3}
+      propertyPath: m_Color.r
+      value: 0.29803923
+      objectReference: {fileID: 0}
+    - target: {fileID: 471271533, guid: 640503c504c3e6d4c87e670075d32f06, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7147376766648333274, guid: 640503c504c3e6d4c87e670075d32f06,
         type: 3}
       propertyPath: m_LocalPosition.x

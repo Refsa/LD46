@@ -7,8 +7,18 @@ Todo:
     ☐ Level Generation
         Place the starting tile
         ☐ Generate traps and bonuses
+            Burner Trap:
+                ☐ After x seconds it lights the connected fuse on fire
+            Burn Rate Trap:
+                After a burning fuse reaches this trap it will increase the burn rate on all tiles
             Bonuses:
-                Score Multiplier
+                Score Multiplier:
+                    Increases score multiplier
+                Connector:
+                    Free connector on map, has a longer fuse burn time than placed fuses
+                Mulligan:
+                    ☐ Node that will remove cards and hand and redraw them
+
     ☐ Game System
         ☐ Add in rounds
             Give card at start of round
@@ -24,11 +34,15 @@ Todo:
             Check if there are no open node connections
             ☐ Check if a game over trap is triggered
             ☐ Check if current score multiplier is below one(?)
+        Cards in Hand:
+            ☐ Create prng system to look at hand before giving a new card
+                This is to avoid a situation where several of the same pieces is in hand
 
     ☐ Art:
         Make the fuse burn between rounds
         ☐ Add some easing to UI animations
         ☐ Add some fancy easing to tile spawning
+        ☐ Vignette shader around the edges of the screen
 
 Ideas:
     - Nodes connections will burn out if they are left open for too long
@@ -37,3 +51,28 @@ Ideas:
         - If score multiplier goes under a threshold it can trigger game over
     - Score multiplier could be how long the fuse burns for, the longer the fuse burns the higher the score
     - At game over it could show an animation burning the fuse, counting up the score
+
+Schedule:
+    1:30AM-3AM - Fuse Burning
+    3AM-4AM - Sleep/Rest
+    5AM-6AM - Sleep/Rest
+    6AM-7AM - Sleep/Rest
+    7AM-8AM - Sleep/Rest
+    8AM-9AM - Sleep/Rest
+    10AM-11AM - Sleep/Rest
+    11AM-12PM - Sleep/Rest
+    12PM-1PM - Fuse Burning
+    1PM-2PM - Fuse Burning
+    2PM-3PM - Art / Mechanics
+    3PM-4PM - Art / Mechanics
+    4PM-5PM - Art / Mechanics
+    5PM-6PM - Art / Mechanics
+    6PM-7PM - Art / Mechanics
+    7PM-8PM - Art / Mechanics
+    8PM-9PM - Game Balance
+    9PM-10PM - Game Balance
+    10PM-11PM - Create Tutorial UI
+    11PM-12AM - Create Tutorial UI
+    12AM-1AM - Polish / Game Testing
+    1AM-2AM - Polish
+    2AM-3AM - Build and Prepare

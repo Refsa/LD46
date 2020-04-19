@@ -1,5 +1,7 @@
 using System.Linq;
+using Unity.Mathematics;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 [System.Flags]
 public enum ConnectorPorts
@@ -51,12 +53,21 @@ public class NodeBase : MonoBehaviour
     static System.Array enumValues;
 
     float portsOpenTime;
+    float portsOpenNormalizedTime;
+
+    public float PortsOpenNormalizedTime => portsOpenNormalizedTime;
+
     bool portsOpen = true;
     protected bool started = false;
     bool isSetup = false;
 
     bool connectedToRoot = false;
     public bool ConnectedToRoot { get => connectedToRoot; set => connectedToRoot = value; }
+
+    int portCount;
+
+    public int OpenPortsLeft => UsedPorts - portCount;
+    public int UsedPorts => math.max(connectedNodes.Where(e => e != null).Count(), portCount);
 
     public void Setup()
     {
@@ -69,6 +80,14 @@ public class NodeBase : MonoBehaviour
 
         if (enumValues == null)
             enumValues = System.Enum.GetValues(typeof(ConnectorPorts));
+
+        foreach (ConnectorPorts port in enumValues)
+        {
+            if (activeConnectorPorts.HasFlag(port))
+            {
+                portCount++;
+            }
+        }
 
         isSetup = true;
     }
@@ -86,11 +105,13 @@ public class NodeBase : MonoBehaviour
         {
             portsOpenTime -= Time.deltaTime / burnRateMultiplier;
             portsOpen = portsOpenTime >= 0f;
+            portsOpenNormalizedTime = 1f - (portsOpenTime / portOpenDuration);
 
-            spriteRenderer.color = Color.Lerp(portsClosedColor, portsOpenColor, portsOpenTime / portOpenDuration);
+            // spriteRenderer.color = Color.Lerp(portsOpenColor, portsClosedColor, portsOpenNormalizedTime);
 
             if (!portsOpen)
             {
+                portsOpenNormalizedTime = 1f;
                 spriteRenderer.color = portsClosedColor;
                 FuseBurned();
             }

@@ -6,11 +6,24 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public readonly Vector2Int[] portDirections = 
+        new Vector2Int[4]
+        {
+            new Vector2Int(0, 1),
+            new Vector2Int(0, -1),
+            new Vector2Int(-1, 0),
+            new Vector2Int(1, 0)
+        };
+
+    public readonly int[] portFlagLookup = new int[4] { 1, -1, 1, -1 };
+
     static GameManager instance;
+    public static GameManager Instance => instance;
+
     static MapGenerator mapGenerator;
+    static FuseBurnEffectManager fuseBurnEffectManager;
 
     [SerializeField] Camera mainCamera;
-
     public static Camera MainCamera;
 
     GridTile selectedGridTile;
@@ -30,6 +43,7 @@ public class GameManager : MonoBehaviour
 
         MainCamera = mainCamera;
         mapGenerator = FindObjectOfType<MapGenerator>();
+        fuseBurnEffectManager = FindObjectOfType<FuseBurnEffectManager>();
     }
 
     private void Start() 
@@ -48,6 +62,20 @@ public class GameManager : MonoBehaviour
         }
 
         UIManager.ShowGameUI();
+
+        // Spawn Start Tile Fuses
+        for (int i = 0; i < 4; i++)
+        {
+            var fuseObject = fuseBurnEffectManager.GetFuseObject().GetComponent<FuseBurnEffectController>();
+            fuseObject.gameObject.SetActive(true);
+
+            fuseObject.CurrentTile = startTile;
+
+            Vector2Int nextTilePos = startTile.GridPos + portDirections[i];
+            fuseObject.NextTile = MapGenerator.Instance.Grid.GetTile(nextTilePos.x, nextTilePos.y);
+
+            fuseBurnEffectManager.AddActiveFuse(fuseObject);
+        }
     }
 
     private void Update()
@@ -59,8 +87,8 @@ public class GameManager : MonoBehaviour
             scoreInfo.ScoreMultiplier = currentScoreMultiplier;
             scoreInfo.BurnRate = fuseBurnRateMultiplier;
             scoreInfo.PathLength = placedTiles.Count;
-            scoreInfo.OpenConnections = 0;
-            scoreInfo.ConnectionsMade = scoreInfo.PathLength * 10;
+            scoreInfo.OpenConnections = placedTiles.Sum(e => e.NodeBase.UsedPorts);
+            scoreInfo.ConnectionsMade = placedTiles.Sum(e => e.NodeBase.OpenPortsLeft);
 
             scoreInfo.CalculateScore();
 
@@ -74,17 +102,6 @@ public class GameManager : MonoBehaviour
         randomCard.Item3.gameObject.SetActive(false);
         UIManager.HandUI.AddCard(randomCard.Item1, randomCard.Item2, randomCard.Item3);
     }
-
-    readonly Vector2Int[] portDirections = 
-        new Vector2Int[4]
-        {
-            new Vector2Int(0, 1),
-            new Vector2Int(0, -1),
-            new Vector2Int(-1, 0),
-            new Vector2Int(1, 0)
-        };
-
-    readonly int[] portFlagLookup = new int[4] { 1, -1, 1, -1 };
 
     bool CheckForRootNodeConnections(NodeBase nodeA, Vector2Int _pos)
     {

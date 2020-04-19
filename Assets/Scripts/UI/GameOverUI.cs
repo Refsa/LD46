@@ -5,6 +5,8 @@ using TMPro;
 
 public struct ScoreInfo
 {
+    const float FuseLengthWeight = 1.5f;
+
     public float Score;
     public float ScoreMultiplier;
     public float BurnRate;
@@ -14,7 +16,7 @@ public struct ScoreInfo
 
     public void CalculateScore()
     {
-        Score = (ConnectionsMade / (OpenConnections + 1)) * PathLength * ScoreMultiplier / BurnRate;
+        Score = ((((float)ConnectionsMade / (float)(OpenConnections + 1)) * (float)PathLength * FuseLengthWeight) * ScoreMultiplier) / BurnRate;
     }
 }
 
