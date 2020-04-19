@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
@@ -27,6 +28,8 @@ public class MapGenerator : MonoBehaviour
     
     public Grid Grid => grid;
 
+    public Vector3 CenterPos;
+
     private void Awake()
     {
         if (instance == null) instance = this;
@@ -45,6 +48,8 @@ public class MapGenerator : MonoBehaviour
 
         int halfGridSize = grid.GridSize / 2;
         Vector2Int gridCenter = new Vector2Int(halfGridSize, halfGridSize);
+
+        List<GridTile> spawnedTiles = new List<GridTile>();
 
         for (int i = 0; i < objectsToSpawn; i++)
         {
@@ -78,7 +83,36 @@ public class MapGenerator : MonoBehaviour
             nodePrefab.GetComponent<NodeBase>().Randomize();
 
             tile.SetNodePrefab(nodePrefab);
+
+            spawnedTiles.Add(tile);
         }
+
+        spawnedTiles.ForEach(
+            e => {
+                for (int i = 0; i < 4; i++)
+                {
+                    ConnectorPorts flag = (ConnectorPorts)(1 << i);
+
+                    if (e.NodeBase.ConnectorPorts.HasFlag(flag))
+                    {
+                        Vector2Int pos = e.GridPos + GameManager.Instance.portDirections[i];
+                        var otherNode = MapGenerator.Instance.Grid.GetTile(pos.x, pos.y);
+                        if(otherNode == null) continue;
+
+                        ConnectorPorts otherFlag = (ConnectorPorts)(1 << i + GameManager.Instance.portFlagLookup[i]);
+
+                        if (otherNode.NodeBase != null &&
+                            otherNode.NodeBase.PortsOpen &&
+                            otherNode.NodeBase.ConnectedToRoot &&
+                            otherNode.NodeBase.ConnectorPorts.HasFlag(otherFlag))
+                        {
+                            e.NodeBase.ConnectedNodes[i] = otherNode.NodeBase;
+                            otherNode.NodeBase.ConnectedNodes[i + GameManager.Instance.portFlagLookup[i]] = e.NodeBase;
+                        }
+                    }
+                }
+            }
+        );
 
         sw.Stop();
         UnityEngine.Debug.Log($"Map Gen. Time: {sw.ElapsedMilliseconds} ms");
@@ -104,7 +138,7 @@ public class MapGenerator : MonoBehaviour
     public GridTile PlaceStartTile()
     {
         int mapCenter = grid.GridSize / 2;
-
+        
         GridTile startTile = grid.GetTile(mapCenter, mapCenter);
         startTile.SetNodePrefab(GameObject.Instantiate(startNodePrefab));
         startTile.NodeBase.ConnectedToRoot = true;
@@ -112,7 +146,7 @@ public class MapGenerator : MonoBehaviour
         return startTile;
     }
 
-    public (Sprite, int, GameObject) GenerateRandomNode(ConnectorType connectorType)
+    public (Sprite, int, GameObject) GenerateRandomNode(ConnectorType connectorType, params ConnectorPorts[] avoidConfigurations)
     {
         GameObject instance = null;
 
@@ -133,10 +167,42 @@ public class MapGenerator : MonoBehaviour
         nodeBase.Setup();
         nodeBase.Randomize();
 
+        if (avoidConfigurations.Length > 0)
+        {
+            float startTime = Time.time;
+            int currentPortCount = avoidConfigurations.Sum(e => CountPorts(e));
+
+            // while (avoidConfigurations.Contains(nodeBase.ConnectorPorts))
+            while (avoidConfigurations.Count(e => e == nodeBase.ConnectorPorts) > 2 && currentPortCount + CountPorts(nodeBase.ConnectorPorts) > 13)
+            {
+                nodeBase.Randomize();
+                if (Time.time - startTime > 1f)
+                {
+                    UnityEngine.Debug.Log($"Card Gen Timeout");
+                    break;
+                }
+            }
+        }
+
         return (
             nodeBase.GetSprite,
             NodeBase.GetRotation(nodeBase.ConnectorPorts),
             instance
         );
+    }
+
+    int CountPorts(ConnectorPorts connectorPorts)
+    {
+        int count = 0;
+        for (int i = 0; i < 4; i++)
+        {
+            ConnectorPorts flag = (ConnectorPorts)(1 << i);
+
+            if (connectorPorts.HasFlag(flag))
+            {
+                count++;
+            }
+        }
+        return count;
     }
 }

@@ -15,7 +15,7 @@ MonoBehaviour:
   activeConnectorPorts: 0
   minPortAmount: 1
   portOpenDuration: 2
-  portsOpenColor: {r: 1, g: 0.48037404, b: 0, a: 1}
+  portsOpenColor: {r: 1, g: 0.37588567, b: 0, a: 1}
   portsClosedColor: {r: 0.38679248, g: 0, b: 0, a: 1}
   noneSprite: {fileID: -1978200202960502808, guid: 201e05e9247f8cc4ea9ab28e1444628d,
     type: 3}

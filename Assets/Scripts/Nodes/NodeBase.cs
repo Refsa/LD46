@@ -140,7 +140,7 @@ public class NodeBase : MonoBehaviour
 
         if (portsOpen)
         {
-            portsOpenTime -= Time.deltaTime / burnRateMultiplier;
+            portsOpenTime -= Time.deltaTime * GameManager.Instance.FuseBurnRateMultiplier;
             portsOpen = portsOpenTime >= 0f;
             portsOpenNormalizedTime = 1f - (portsOpenTime / portOpenDuration);
 
@@ -249,6 +249,7 @@ public class NodeBase : MonoBehaviour
     public void Randomize()
     {
         int openPorts = Random.Range(minPortAmount, 4);
+        activeConnectorPorts = default;
 
         for (int i = 0; i < openPorts; i++)
         {

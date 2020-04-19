@@ -16,6 +16,11 @@ public class TutorialUI : MonoBehaviour
 
     public void Show()
     {
+        if (GameManager.NewlyOpenedGame)
+        {
+            startGameButtonText.transform.parent.gameObject.SetActive(false);
+        }
+
         if (GameManager.Instance.GameStarted)
         {
             startGameButtonText.text = "Continue";
@@ -40,6 +45,8 @@ public class TutorialUI : MonoBehaviour
         else if (currentStep == steps.Length - 1)
         {
             nextButton.gameObject.SetActive(false);
+
+            startGameButtonText.transform.parent.gameObject.SetActive(true);
         }
 
         steps[currentStep].gameObject.SetActive(true);

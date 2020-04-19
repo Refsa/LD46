@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     public static Camera MainCamera;
 
     static bool newlyOpenedGame = true;
+    public static bool NewlyOpenedGame => newlyOpenedGame;
 
     GameState currentGameState;
     public GameState CurrentGameState => currentGameState;
@@ -50,12 +51,19 @@ public class GameManager : MonoBehaviour
 
     float currentScoreMultiplier = 1f;
     float fuseBurnRateMultiplier = 1f;
-    float score = 0f;
+
+    public float FuseBurnRateMultiplier => fuseBurnRateMultiplier;
 
     float burnRateBleepInterval = 1f;
     float currentBurnRateBleepInterval;
     float lastBurnRateBleepTime;
     float fuseLengthMultiplier = 1f;
+
+    System.DateTime gameTimer;
+    public System.DateTime GameTimer => gameTimer;
+    float lastFuseBurnRateBump;
+
+    public Vector3 LastPlacedTilePos;
 
     private void Awake() 
     {
@@ -100,6 +108,19 @@ public class GameManager : MonoBehaviour
             SetGameState(GameState.Tutorial);
         }
 
+        if(placedTiles.Count == 1)
+        {
+            lastFuseBurnRateBump = Time.time;
+            return;
+        }
+
+        gameTimer = gameTimer.AddSeconds(Time.deltaTime);
+        if (Time.time - lastFuseBurnRateBump > 10f)
+        {
+            AddToFuseBurnTimeMultiplier(0.3f);
+            lastFuseBurnRateBump = Time.time;
+        }
+
         placedTiles.ForEach(e => e.NodeBase.Tick());
 
         if (placedTiles.Count > 0 && placedTiles.TrueForAll(e => !e.NodeBase.PortsOpen))
@@ -114,10 +135,11 @@ public class GameManager : MonoBehaviour
                 SoundManager.PlayBurnRateBeep();
                 lastBurnRateBleepTime = Time.time;
 
-                float startRampUpTime = 8f; // Where the ramp up starts
+                float startRampUpTime = 32f; // Where the ramp up starts
                 float expFactor = 3f; // How much it ramps up
                 float fuseTimeLeft = placedTiles.Sum(e => e.NodeBase.PortsOpenTime);
                 float fuseTimeNorm = (1f - Mathf.Clamp01(fuseTimeLeft / startRampUpTime));
+                
                 fuseLengthMultiplier = 1f + math.exp(fuseTimeNorm * expFactor);
             }
         }
@@ -152,15 +174,19 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        gameTimer = new System.DateTime(0);
+
         placedTiles = new List<GridTile>();
 
         startTile = mapGenerator.PlaceStartTile();
         startTile.NodeBase.Execute();
         placedTiles.Add(startTile);
 
+        LastPlacedTilePos = startTile.transform.position;
+
         mapGenerator.Generate();
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 5; i++)
         {
             GenerateRandomCard();
         }
@@ -203,13 +229,6 @@ public class GameManager : MonoBehaviour
         UIManager.ShowGameOverUI(scoreInfo);
 
         currentGameState = GameState.GameOver;
-    }
-
-    void GenerateRandomCard()
-    {
-        var randomCard = MapGenerator.Instance.GenerateRandomNode(ConnectorType.Fuse);
-        randomCard.Item3.gameObject.SetActive(false);
-        UIManager.HandUI.AddCard(randomCard.Item1, randomCard.Item2, randomCard.Item3);
     }
 
     bool CheckForRootNodeConnections(NodeBase nodeA, Vector2Int _pos)
@@ -265,9 +284,21 @@ public class GameManager : MonoBehaviour
                     
                     otherNode.NodeBase.ConnectedToRoot = true;
                     placedTiles.Add(otherNode);
+
+                    PropagateObjectNodeRootConnection(otherNode.NodeBase, otherNode.GridPos);
                 }
             }
         }
+    }
+
+    void GenerateRandomCard()
+    {
+        var randomCard = 
+            MapGenerator.Instance.GenerateRandomNode(ConnectorType.Fuse, 
+                UIManager.HandUI.Cards.Select(e => e.NodePrefab.GetComponent<NodeBase>().ConnectorPorts).ToArray());
+
+        randomCard.Item3.gameObject.SetActive(false);
+        UIManager.HandUI.AddCard(randomCard.Item1, randomCard.Item2, randomCard.Item3);
     }
 
     public static void SetSelectedGridTile(GridTile gridTile)
@@ -285,6 +316,8 @@ public class GameManager : MonoBehaviour
 
             UIManager.HandUI.RemoveCard(instance.selectedCard);
             instance.GenerateRandomCard();
+
+            instance.LastPlacedTilePos = gridTile.transform.position;
         }
     }
 
@@ -309,11 +342,11 @@ public class GameManager : MonoBehaviour
     {
         instance.fuseBurnRateMultiplier += value;
 
-        instance.currentBurnRateBleepInterval = instance.burnRateBleepInterval / instance.fuseBurnRateMultiplier;
+        instance.currentBurnRateBleepInterval = instance.burnRateBleepInterval / (instance.fuseBurnRateMultiplier * 0.25f);
 
         instance.placedTiles.Where(e => e.NodeBase.PortsOpen).All(e => {e.NodeBase.BurnRateMultiplier = instance.fuseBurnRateMultiplier; return false;});
 
-        UIManager.ScoreUI.SetBurnRateMultiplier(instance.currentScoreMultiplier);
+        UIManager.ScoreUI.SetBurnRateMultiplier(instance.fuseBurnRateMultiplier);
 
         // UnityEngine.Debug.Log($"Burn Rate Changed {instance.fuseBurnRateMultiplier}");
     }

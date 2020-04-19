@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeConnectorPorts: 0
   minPortAmount: 2
-  portOpenDuration: 10
-  portsOpenColor: {r: 0.93430066, g: 1, b: 0.6666667, a: 1}
+  portOpenDuration: 16
+  portsOpenColor: {r: 0.6666667, g: 1, b: 0.6722993, a: 1}
   portsClosedColor: {r: 0.38679248, g: 0, b: 0, a: 1}
   noneSprite: {fileID: -1978200202960502808, guid: 201e05e9247f8cc4ea9ab28e1444628d,
     type: 3}

@@ -12,6 +12,8 @@ public class HandUI : MonoBehaviour
     List<CardUI> cards;
     RectTransform rectTransform;
 
+    public List<CardUI> Cards => cards;
+
     private void Awake() 
     {
         cards = new List<CardUI>();
@@ -27,10 +29,14 @@ public class HandUI : MonoBehaviour
         newCardUi.SetNodeBase(prefab);
 
         cardsInHand++;
+
+        cards.Add(newCardUi);
     }
 
     public void RemoveCard(CardUI card)
     {
+        cards.Remove(card);
+
         Destroy(card.gameObject);
     }
 }
