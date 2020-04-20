@@ -5411,8 +5411,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 958cc9eb7b51b56478fb079e259ca45b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectsToSpawn: 2000
-  centerObjectSpawnSafezone: 3
+  objectsToSpawn: 4000
+  centerObjectSpawnSafezone: 2
   distanceBetweenObjects: 1
   startNodePrefab: {fileID: 2204345689477208692, guid: 7f7a8a4b7119dc74e8bc2aeab2d8ef4f,
     type: 3}
@@ -7156,7 +7156,9 @@ MonoBehaviour:
     and show the way to the last placed \n    Fuse\n\n    If randomly generated tiles
     on the map are \n    connected together, you can light one end to \n    combo
     them together\n\n    Start the game by going through all the tutorial \n    pages
-    or click the \"Exit\" button on the first \n    page"
+    or click the \"Exit\" button on the first \n    page\n\n    The burn rate increase
+    every 10 seconds. \n    Each rounds lasts on average 3 minutes \n    unless you
+    focus on expansion."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -7225,12 +7227,12 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 2031118188}
-    characterCount: 354
+    characterCount: 480
     spriteCount: 0
-    spaceCount: 104
-    wordCount: 62
+    spaceCount: 138
+    wordCount: 81
     linkCount: 0
-    lineCount: 12
+    lineCount: 16
     pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0

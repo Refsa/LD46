@@ -173,15 +173,20 @@ public class MapGenerator : MonoBehaviour
             int currentPortCount = avoidConfigurations.Sum(e => CountPorts(e));
 
             // while (avoidConfigurations.Contains(nodeBase.ConnectorPorts))
-            while (avoidConfigurations.Count(e => e == nodeBase.ConnectorPorts) > 2 && currentPortCount + CountPorts(nodeBase.ConnectorPorts) > 13)
+            // while (avoidConfigurations.Count(e => e == nodeBase.ConnectorPorts) >= 2 && (currentPortCount + CountPorts(nodeBase.ConnectorPorts)) < 15)
+            while (avoidConfigurations.Count(e => e == nodeBase.ConnectorPorts) >= 0 && 
+                (currentPortCount + CountPorts(nodeBase.ConnectorPorts)) < avoidConfigurations.Length * 2.5f)
             {
                 nodeBase.Randomize();
-                if (Time.time - startTime > 1f)
+                if (Time.time - startTime > 0.25f)
                 {
                     UnityEngine.Debug.Log($"Card Gen Timeout");
                     break;
                 }
             }
+
+            int portCount = currentPortCount + CountPorts(nodeBase.ConnectorPorts);
+            UnityEngine.Debug.Log($"{portCount}");
         }
 
         return (

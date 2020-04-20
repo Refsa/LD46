@@ -66,8 +66,8 @@ public class NodeBase : MonoBehaviour
     public bool ConnectedToRoot { get => connectedToRoot; set => connectedToRoot = value; }
 
     int portCount;
-
     public int PortCount => portCount;
+
     public int OpenPortsLeft => UsedPorts - portCount;
     public int UsedPorts => math.max(connectedNodes.Where(e => e != null).Count(), portCount);
 
@@ -248,19 +248,26 @@ public class NodeBase : MonoBehaviour
 
     public void Randomize()
     {
-        int openPorts = Random.Range(minPortAmount, 4);
-        activeConnectorPorts = default;
+        int openPorts = Random.Range(minPortAmount, 5);
+        activeConnectorPorts = (ConnectorPorts) 0;
 
-        for (int i = 0; i < openPorts; i++)
+        if (openPorts == 4)
         {
-            ConnectorPorts newPort = default;
-            do
-            {
-                newPort = (ConnectorPorts) enumValues.GetValue(Random.Range(0, enumValues.Length));
-            } while ((newPort & activeConnectorPorts) != 0);
-
-            activeConnectorPorts |= newPort;
+            activeConnectorPorts = (ConnectorPorts) ~0;
         }
+        else
+            for (int i = 0; i < openPorts; i++)
+            {
+                float startTime = Time.time;
+                ConnectorPorts newPort = (ConnectorPorts) 0;
+                do
+                {
+                    if (Time.time - startTime > 0.1f) break;
+                    newPort = (ConnectorPorts) enumValues.GetValue(Random.Range(0, enumValues.Length));
+                } while ((newPort & activeConnectorPorts) != 0);
+    
+                activeConnectorPorts |= newPort;
+            }
 
 
         openConnectorPorts = activeConnectorPorts;

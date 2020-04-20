@@ -117,7 +117,7 @@ public class GameManager : MonoBehaviour
         gameTimer = gameTimer.AddSeconds(Time.deltaTime);
         if (Time.time - lastFuseBurnRateBump > 10f)
         {
-            AddToFuseBurnTimeMultiplier(0.3f);
+            AddToFuseBurnTimeMultiplier(0.25f);
             lastFuseBurnRateBump = Time.time;
         }
 
